@@ -138,15 +138,17 @@ Threads.@threads for id in 1:npar
           res31 = intensities(swt3, qgrid1; energies = [1.5], kernel, kT= 0*meV_per_K);  push!(ress3, res31);
           res32 = intensities(swt3, qgrid2; energies = [1.5], kernel, kT= 0*meV_per_K);  push!(ress3, res32);
         end
-        res = res1[1];
-        for a in axes(res.data, 1), b in axes(res.data, 2), c in axes(res.data, 3)
-          res.data[a, b, c] = 0.0;
-        end;  for i in axes(ress1, 1)  res.data[:] += res1[i].data[:] + res2[i].data[:] + res3[i].data[:];  end
+        res1 = res11[1];  res2 = res12[1];
+        for a in axes(res1.data, 1), b in axes(res1.data, 2), c in axes(res1.data, 3)
+          res1.data[a, b, c] = 0.0;
+        end;  for i in axes(ress1, 1)  res1.data[:] += res11[i].data[:] + res21[i].data[:] + res31[i].data[:];  end
+        for a in axes(res2.data, 1), b in axes(res2.data, 2), c in axes(res2.data, 3)
+          res2.data[a, b, c] = 0.0;
+        end;  for i in axes(ress1, 1)  res2.data[:] += res12[i].data[:] + res22[i].data[:] + res32[i].data[:];  end
       
-        data = zeros(size(res.data,2),size(res.data,3))
-        for i in axes(res.data, 2), j in axes(res.data, 3)
-          data[i,j] = res.data[1,i,j]
-        end
+        data1 = Vector{Float64}(undef,0);  for i in axes(res1.data, 2)  push!(data1, res1.data[1,i]);  end
+        data2 = Vector{Float64}(undef,0);  for i in axes(res2.data, 2)  push!(data2, res2.data[1,i]);  end
+        data = [data1, data2];
       end
     end
 
