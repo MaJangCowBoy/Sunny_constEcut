@@ -93,9 +93,14 @@ function define_qline(cryst,axis1,axis2,N1,N2)
   return qpath1, qpath2, range1, range2, norm1, norm2;
 end
       
-function export_to_h5file(filename, data, range1, range2, norm1, norm2)
+function export_to_h5file2D(filename, data, range1, range2, norm1, norm2)
   h5write(filename, "data", data);
   h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
   h5write(filename, "norm1", norm1);  h5write(filename, "norm2", norm2) ;
 end
       
+function export_to_h5file1D(filename, data1, data2, range1, range2, norm1, norm2)
+  h5write(filename, "data1", data1);  h5write(filename, "data2", data2);
+  h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
+  h5write(filename, "norm1", norm1);  h5write(filename, "norm2", norm2) ;
+end

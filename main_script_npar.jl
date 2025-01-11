@@ -148,7 +148,6 @@ Threads.@threads for id in 1:npar
       
         data1 = Vector{Float64}(undef,0);  for i in axes(res1.data, 2)  push!(data1, res1.data[1,i]);  end
         data2 = Vector{Float64}(undef,0);  for i in axes(res2.data, 2)  push!(data2, res2.data[1,i]);  end
-        data = [data1, data2];
       end
     end
 
@@ -161,13 +160,18 @@ Threads.@threads for id in 1:npar
       xlims!(ax, -1, 1);  ylims!(ax, -√3/2, √3/2);  save(figname,fig);
     elseif sweep_mode == "1D"
       fig = Figure();  ax1 = Axis(fig[1, 1]);  ax2 = Axis(fig[2, 1]);
-      plot!(ax1, range1, data[1][:]; color = :blue, linewidth = 2);
-      plot!(ax2, range2, data[2][:]; color = :red, linewidth = 2);
+      plot!(ax1, range1, data1; color = :blue, linewidth = 2);
+      plot!(ax2, range2, data2; color = :red, linewidth = 2);
       save(figname,fig);
     end
 
-    h5name  = "exportFile_"*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".h5";
-    export_to_h5file(h5name,data,range1,range2,norm1,norm2);
+    if sweep_mode == "2D"
+      h5name  = "exportFile_"*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".h5";
+      export_to_h5file2D(h5name,data,range1,range2,norm1,norm2);
+    elseif sweep_mode == "1D"
+      h5name  = "exportFile_"*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".h5";
+      export_to_h5file1D(h5name,data1,data2,range1,range2,norm1,norm2);
+    end
     
   end
 end
