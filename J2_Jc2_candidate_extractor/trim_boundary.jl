@@ -1,26 +1,27 @@
 using DelimitedFiles, CairoMakie, Printf
+include("param.jl");
 
 data = Matrix{Float64}(undef, 0, 6);
 f = open("LT_minimize_0p0000.dat", "r")
 for line in eachline(f)
   tok = parse.(Float64,split(line))
-  data = [data; tok']
+  global data = [data; tok']
 end;  close(f);
 
-phasediagram = NaN * zeros(101,51);
+phasediagram = NaN * zeros(length(J2arr),length(Jc2arr));
 
 for row in eachrow(data)
   if row[4] > 0 && abs(row[5]) < 1e-5
-    x = Int(round( 1 + row[1]/0.02));
-    y = Int(round(26 + row[3]/0.02));
+    x = findall(J2arr .== row[1])[1]; 
+    y = findall(Jc2arr .== row[3])[1];
     phasediagram[x,y] = 1;
   end
 end
 
-fig = Figure(resolution = (800, 400));
+fig = Figure();
 ax = Axis(fig[1, 1]);
-heatmap!(ax, 0.0:0.02:2.0, 0-0.5:0.02:0.5, phasediagram);
-xlims!(ax, 0.0, 2.0);  ylims!(ax, -0.5, 0.5);
+heatmap!(ax, J2arr, Jc2arr, phasediagram);
+xlims!(ax, minimum(J2arr), maximum(J2arr));  ylims!(ax, minimum(Jc2arr), maximum(Jc2arr));
 save("LT_minimize_0p0000.png", fig);
 
 phasediagram_trim = copy(phasediagram);
@@ -34,10 +35,10 @@ for id1 in axes(phasediagram,1), id2 in axes(phasediagram,2)
   end
 end
 
-fig = Figure(resolution = (800, 400));
+fig = Figure();
 ax = Axis(fig[1, 1]);
-heatmap!(ax, 0.0:0.02:2.0, 0-0.5:0.02:0.5, phasediagram_trim);
-xlims!(ax, 0.0, 2.0);  ylims!(ax, -0.5, 0.5);
+heatmap!(ax, J2arr, Jc2arr, phasediagram_trim);
+xlims!(ax, minimum(J2arr), maximum(J2arr));  ylims!(ax, minimum(Jc2arr), maximum(Jc2arr));
 save("LT_minimize_0p0000_trim.png", fig);
 
 f = open("LT_minimize_0p0000_trim.dat", "w")
@@ -48,4 +49,3 @@ for id1 in axes(phasediagram_trim,1), id2 in axes(phasediagram_trim,2)
     println(f, str)
   end
 end;  close(f);
-
