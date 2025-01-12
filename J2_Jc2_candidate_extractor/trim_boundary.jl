@@ -2,7 +2,10 @@ using DelimitedFiles, CairoMakie, Printf
 include("param.jl");
 
 data = Matrix{Float64}(undef, 0, 6);
-f = open("LT_minimize_0p0000.dat", "r")
+
+filename = "LT_minimize_0p0000.dat";
+
+f = open(filename, "r")
 for line in eachline(f)
   tok = parse.(Float64,split(line))
   global data = [data; tok']
@@ -22,7 +25,8 @@ fig = Figure();
 ax = Axis(fig[1, 1]);
 heatmap!(ax, J2arr, Jc2arr, phasediagram);
 xlims!(ax, minimum(J2arr), maximum(J2arr));  ylims!(ax, minimum(Jc2arr), maximum(Jc2arr));
-save("LT_minimize_0p0000.png", fig);
+figname = replace(filename, ".dat" => ".png");
+save(figname, fig);
 
 phasediagram_trim = copy(phasediagram);
 for id1 in axes(phasediagram,1), id2 in axes(phasediagram,2)
@@ -39,9 +43,11 @@ fig = Figure();
 ax = Axis(fig[1, 1]);
 heatmap!(ax, J2arr, Jc2arr, phasediagram_trim);
 xlims!(ax, minimum(J2arr), maximum(J2arr));  ylims!(ax, minimum(Jc2arr), maximum(Jc2arr));
-save("LT_minimize_0p0000_trim.png", fig);
+figname = replace(filename, ".dat" => "_trim.png");
+save(figname, fig);
 
-f = open("LT_minimize_0p0000_trim.dat", "w")
+filename = replace(filename, ".dat" => "_trim.dat");
+f = open(filename, "w")
 for id1 in axes(phasediagram_trim,1), id2 in axes(phasediagram_trim,2)
   if !isnan(phasediagram_trim[id1,id2])
     j2 = (id1-1)*0.02;  jc2 = (id2-26)*0.02;
@@ -49,3 +55,4 @@ for id1 in axes(phasediagram_trim,1), id2 in axes(phasediagram_trim,2)
     println(f, str)
   end
 end;  close(f);
+
