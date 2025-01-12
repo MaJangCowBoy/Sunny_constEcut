@@ -4,7 +4,6 @@ include("param.jl");
 data = Matrix{Float64}(undef, 0, 6);
 
 filename = "LT_minimize_0p0000.dat";
-jc1 = parse(Float64,findfirst(r"\d.+\d",filename));
 
 f = open(filename, "r")
 for line in eachline(f)
@@ -16,7 +15,8 @@ phasediagram = NaN * zeros(length(J2arr),length(Jc2arr));
 
 for row in eachrow(data)
   if row[4] > 0 && abs(row[5]) < 1e-5
-    x = findall(J2arr .== row[1])[1]; 
+    x = findall(J2arr .== row[1])[1];
+    global jc1 = row[2];
     y = findall(Jc2arr .== row[3])[1];
     phasediagram[x,y] = 1;
   end
