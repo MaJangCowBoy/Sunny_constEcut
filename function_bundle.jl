@@ -1,4 +1,4 @@
-function system_initialize(sys::System, keyword::String)
+function system_initialize(sys::System, keyword::String, J1::Float64)
         
   if keyword == "1Q_1"
     k = [ 1/3, 0, 0];  ψ = π/6;  ϕ = 120 * π/180;  S0 = [0, 0, 1.5];
@@ -34,6 +34,11 @@ function system_initialize(sys::System, keyword::String)
   else
     error("Invalid keyword.")
   end
+
+  dt = 0.1/(J1 * 1.5 * 1.5);  damping = 0.1;  
+  langevin = Langevin(dt; damping, kT = 0.0);
+  langevin.kT = 0.1 * meV_per_K;  for _ in 1:100000  step!(sys, langevin)  end
+  langevin.kT = 0.0;              for _ in 1:100000  step!(sys, langevin)  end
 
   return sys;
 
@@ -99,8 +104,8 @@ function export_to_h5file2D(filename, data, range1, range2, norm1, norm2)
   h5write(filename, "norm1", norm1);  h5write(filename, "norm2", norm2) ;
 end
       
-function export_to_h5file1D(filename, data1, data2, range1, range2, norm1, norm2)
-  h5write(filename, "data1", data1);  h5write(filename, "data2", data2);
+function export_to_h5file1D(filename, data_1, data_2, range1, range2, norm1, norm2)
+  h5write(filename, "data_1", data_1);  h5write(filename, "data_2", data_2);
   h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
   h5write(filename, "norm1", norm1);  h5write(filename, "norm2", norm2) ;
 end
