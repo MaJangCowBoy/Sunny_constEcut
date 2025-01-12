@@ -4,6 +4,7 @@ include("param.jl");
 data = Matrix{Float64}(undef, 0, 6);
 
 filename = "LT_minimize_0p0000.dat";
+jc1 = parse(Float64,findfirst(r"\d.+\d",filename));
 
 f = open(filename, "r")
 for line in eachline(f)
