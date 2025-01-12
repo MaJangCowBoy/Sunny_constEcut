@@ -24,7 +24,7 @@ J2 = j2 * J1;  J3 = j3 * J1;  Jc1 = jc1 * J1;  Jc2 = jc2 * J1;
 Jc1mat = Jc1 * ([1 0 0; 0 1 0; 0 0 0] + 0.001 * dmvec([0, 0, 1]));
 
 cryst = Crystal("CoTaS.cif",symprec=1e-3);
-CoTa3S6 = subcrystal(cryst, "Co1");
+CoTa3S6 = subcrystal(cryst, "Co");
 sys = System(CoTa3S6, [1 => Moment(s=3/2, g=2)], :dipole)
 set_pair_coupling!(sys, (Si, Sj) -> Si'*J1*Sj + B1*(Si'*Sj)^2, Bond(1, 1, [1, 0, 0]));
 set_exchange!(sys, J2, Bond(1,1,[1,-1,0]));
