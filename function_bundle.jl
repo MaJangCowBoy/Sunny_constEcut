@@ -39,6 +39,8 @@ function system_initialize(sys::System, keyword::String, J1::Float64)
   langevin = Langevin(dt; damping, kT = 0.0);
   langevin.kT = 0.1 * meV_per_K;  for _ in 1:100000  step!(sys, langevin)  end
   langevin.kT = 0.0;              for _ in 1:100000  step!(sys, langevin)  end
+  minimize_energy!(sys; maxiters = 3000, g_tol=1e-9);
+  minimize_energy!(sys; maxiters = 3000, g_tol=1e-9);
 
   return sys;
 
