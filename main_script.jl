@@ -21,7 +21,7 @@ j2 = parse(Float64,ARGS[3]);  jc1 = parse(Float64,ARGS[4]);  jc2 = parse(Float64
 F = jc1 + jc2;  G = jc1 - jc2 * 0.5;
 j3 = 1/2 * (1 - (F*G - jc2*F/2 + 2*jc2*G )/√(F*F-2*F*G+4*G*G));
 J2 = j2 * J1;  J3 = j3 * J1;  Jc1 = jc1 * J1;  Jc2 = jc2 * J1;
-Jc1mat = Jc1 * ([1 0 0; 0 1 0; 0 0 0] + 0.001 * dmvec([0, 0, 1]));
+Jc1mat = Jc1 * ([1 0 0; 0 1 0; 0 0 1] + 0.001 * dmvec([0, 0, 1]));
 
 cryst = Crystal("CoTaS.cif",symprec=1e-3);
 CoTa3S6 = subcrystal(cryst, "Co");
