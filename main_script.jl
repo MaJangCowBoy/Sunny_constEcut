@@ -69,12 +69,12 @@ elseif main_keyword == "1Q"
     data = res1.data[1,:,:] + res2.data[1,:,:] + res3.data[1,:,:];
   elseif sweep_mode == "1D"
     res1_1 = intensities(swt1, qpath1; energies, kernel);
-    res2_1 = intensities(swt2, qgrid1; energies, kernel);
-    res3_1 = intensities(swt3, qgrid1; energies, kernel);
+    res2_1 = intensities(swt2, qpath1; energies, kernel);
+    res3_1 = intensities(swt3, qpath1; energies, kernel);
     data_1 = res1_1.data[1,:] + res2_1.data[1,:] + res3_1.data[1,:];
     res1_2 = intensities(swt1, qpath2; energies, kernel);
-    res2_2 = intensities(swt2, qgrid2; energies, kernel);
-    res3_2 = intensities(swt3, qgrid2; energies, kernel);
+    res2_2 = intensities(swt2, qpath2; energies, kernel);
+    res3_2 = intensities(swt3, qpath2; energies, kernel);
     data_2 = res1_2.data[1,:] + res2_2.data[1,:] + res3_2.data[1,:];
   end
 end
