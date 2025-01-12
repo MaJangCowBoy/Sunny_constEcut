@@ -15,7 +15,7 @@ formfactors = [1 => FormFactor("Co2")];
 #? define system part ?#
 J1 = 1.6;  Kz = -0.001;
 if main_keyword == "3Q"      B1 = 0.06 * J1;
-elseif main_keyword == "1Q"  B1 = 0.0;  end
+elseif main_keyword == "1Q"  B1 = 0.0;  end;
 
 j2 = parse(Float64,ARGS[3]);  jc1 = parse(Float64,ARGS[4]);  jc2 = parse(Float64,ARGS[5]);
 F = jc1 + jc2;  G = jc1 - jc2 * 0.5;
