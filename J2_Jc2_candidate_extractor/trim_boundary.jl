@@ -51,7 +51,7 @@ filename = replace(filename, ".dat" => "_trim.dat");
 f = open(filename, "w")
 for id1 in axes(phasediagram_trim,1), id2 in axes(phasediagram_trim,2)
   if !isnan(phasediagram_trim[id1,id2])
-    j2 = (id1-1)*0.02;  jc2 = (id2-26)*0.02;
+    j2 = J2arr[id1];  jc2 = Jc2arr[id2];
     str = @sprintf("%.3f %.3f %.3f %.3f %.3f %.3f", j2, jc1, jc2, 0.333, 0.0, 0.0);
     println(f, str)
   end
