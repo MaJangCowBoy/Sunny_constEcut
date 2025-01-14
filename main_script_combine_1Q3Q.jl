@@ -13,7 +13,7 @@ kernel = lorentzian(fwhm=2.0);  formfactors = [1 => FormFactor("Co2")];
 
 J1 = 1.6;  Kz = -0.001;
 if     main_keyword == "3Q"  b1 = 0.06;
-elseif main_keyword == "1Q"  b1 = 0.00;  
+elseif main_keyword == "1Q"  b1 = 0.00;
 else   error("Invalid keyword.");  end;
 B1 = b1 * J1;
 
