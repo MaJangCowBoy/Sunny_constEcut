@@ -1,3 +1,23 @@
+function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1))
+  
+  sys = System(CoTa3S6, [1 => Moment(s=3/2, g=2)], :dipole);
+
+  if main_keyword == "3Q"
+    set_pair_coupling!(sys, (Si, Sj) -> J1*(Si'*Sj) + B1*(Si'*Sj)^2, Bond(1, 1, [1, 0, 0]));
+  elseif main_keyword == "1Q"
+    set_exchange!(sys, J1, Bond(1, 1, [1, 0, 0]));
+  else  error("Invalid keyword.");  end
+
+  set_exchange!(sys, J2, Bond(1,1,[1,-1, 0]));
+  set_exchange!(sys, J3, Bond(1,1,[2, 0, 0]));
+  set_exchange!(sys, Jc1mat, Bond(1,2,[0, 0, 0]));
+  set_exchange!(sys, Jc2, Bond(1,2,[1, 1, 0]));
+  set_onsite_coupling!(sys, S -> Kz*S[3]^2, 1);
+  sys = repeat_periodically(sys, (3,3,1));
+
+  return sys;
+end
+
 function system_initialize(sys::System, keyword::String, J1::Float64)
         
   if keyword == "1Q_1"
@@ -15,8 +35,8 @@ function system_initialize(sys::System, keyword::String, J1::Float64)
   elseif keyword == "1Q_3"
     k = [-1/3,1/3, 0];  ψ = 5π/6;  ϕ = -120 * π/180;  S0 = [0, 0, 1.5];
     for x in axes(sys.dipoles,1), y in axes(sys.dipoles,2), z in axes(sys.dipoles,3), b in axes(sys.dipoles,4)
-            θ = 2π * dot(k,[x,y,z]) + ϕ * Float64(isodd(b));
-            sys.dipoles[x,y,z,b] = RotZ(ψ) * RotX(θ) * S0;
+      θ = 2π * dot(k,[x,y,z]) + ϕ * Float64(isodd(b));
+      sys.dipoles[x,y,z,b] = RotZ(ψ) * RotX(θ) * S0;
     end;
   elseif keyword == "3Q"
     S1 = RotZ(π/3) * RotX(2π/3) * [0, 0, 1.5];
@@ -39,13 +59,11 @@ function system_initialize(sys::System, keyword::String, J1::Float64)
   langevin = Langevin(dt; damping, kT = 0.0);
   langevin.kT = 0.1 * meV_per_K;  for _ in 1:100000  step!(sys, langevin)  end
   langevin.kT = 0.0;              for _ in 1:100000  step!(sys, langevin)  end
-  minimize_energy!(sys; maxiters = 3000, g_tol=1e-9);
-  minimize_energy!(sys; maxiters = 3000, g_tol=1e-9);
+  
+  for _ in 1:20  minimize_energy!(sys; maxiters = 3000, g_tol=1e-9);  end
 
   return sys;
-
 end
-      
       
 function add_BZ_boundary(fig,ax)
 
@@ -66,7 +84,6 @@ function add_BZ_boundary(fig,ax)
   end
 
   return fig, ax
-
 end
       
 function define_qgrid(cryst,axis1,axis2,N1,N2)
@@ -100,14 +117,18 @@ function define_qline(cryst,axis1,axis2,N1,N2)
   return qpath1, qpath2, range1, range2, norm1, norm2;
 end
       
-function export_to_h5file2D(filename, data, range1, range2, norm1, norm2)
+function export_to_h5file2D(filename, data, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
   h5write(filename, "data", data);
   h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
-  h5write(filename, "norm1", norm1);  h5write(filename, "norm2", norm2) ;
+  h5write(filename, "norm1", norm1);    h5write(filename, "norm2", norm2);
+  h5write(filename, "b1", b1);          h5write(filename, "j2", j2);
+  h5write(filename, "jc1", jc1);        h5write(filename, "jc2", jc2);
 end
       
-function export_to_h5file1D(filename, data_1, data_2, range1, range2, norm1, norm2)
+function export_to_h5file1D(filename, data_1, data_2, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
   h5write(filename, "data_1", data_1);  h5write(filename, "data_2", data_2);
   h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
-  h5write(filename, "norm1", norm1);  h5write(filename, "norm2", norm2) ;
+  h5write(filename, "norm1", norm1);    h5write(filename, "norm2", norm2);
+  h5write(filename, "b1", b1);          h5write(filename, "j2", j2);
+  h5write(filename, "jc1", jc1);        h5write(filename, "jc2", jc2);
 end
