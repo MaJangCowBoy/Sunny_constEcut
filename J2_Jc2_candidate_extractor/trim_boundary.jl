@@ -1,9 +1,8 @@
 using DelimitedFiles, CairoMakie, Printf
 include("param.jl");
 
+# filename = "LT_minimize_0p0000.dat";
 data = Matrix{Float64}(undef, 0, 6);
-
-filename = "LT_minimize_0p0000.dat";
 
 f = open(filename, "r")
 for line in eachline(f)
