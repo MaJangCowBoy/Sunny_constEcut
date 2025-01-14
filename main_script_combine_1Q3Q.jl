@@ -11,11 +11,8 @@ sweep_mode = ARGS[1];  energies = [1.5];
 #? Basic parameters ?#
 kernel = lorentzian(fwhm=2.0);  formfactors = [1 => FormFactor("Co2")];
 
-J1 = 1.6;  Kz = -0.001;
-if     main_keyword == "3Q"  b1 = 0.06;
-elseif main_keyword == "1Q"  b1 = 0.00;
-else   error("Invalid keyword.");  end;
-B1 = b1 * J1;
+J1 = 1.60;  Kz = -0.001;
+b1 = 0.06;  B1 = b1 * J1;
 
 j2 = parse(Float64,ARGS[2]);  jc1 = parse(Float64,ARGS[3]);  jc2 = parse(Float64,ARGS[4]);
 F = jc1 + jc2;  G = jc1 - jc2 * 0.5;
@@ -26,17 +23,17 @@ Jc1mat = Jc1 * ([1 0 0; 0 1 0; 0 0 1] + 0.001 * dmvec([0, 0, 1]));
 
 #? define system part ?#
 cryst = Crystal("CoTaS.cif",symprec=1e-3);  CoTa3S6 = subcrystal(cryst, "Co");
-sys = define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
+sys = define_system(CoTa3S6,"3Q",J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
 keyword = "3Q";  sys = system_initialize(sys, keyword, J1);
 measure = ssf_perp(sys; formfactors);  swt = SpinWaveTheory(sys; measure);
 
-sys1 = define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
+sys1 = define_system(CoTa3S6,"1Q",J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
 keyword = "1Q_1";  sys1 = system_initialize(sys1, keyword, J1);
 measure = ssf_perp(sys1; formfactors);  swt1 = SpinWaveTheory(sys1; measure);
-sys2 = define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
+sys2 = define_system(CoTa3S6,"1Q",J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
 keyword = "1Q_2";  sys2 = system_initialize(sys2, keyword, J1);
 measure = ssf_perp(sys2; formfactors);  swt2 = SpinWaveTheory(sys2; measure);
-sys3 = define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
+sys3 = define_system(CoTa3S6,"1Q",J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
 keyword = "1Q_3";  sys3 = system_initialize(sys3, keyword, J1);
 measure = ssf_perp(sys3; formfactors);  swt3 = SpinWaveTheory(sys3; measure);
 #? define system part ?#
