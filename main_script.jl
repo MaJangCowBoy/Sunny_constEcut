@@ -1,7 +1,7 @@
 #? tested with Sunny v0.7.4
 
 using Sunny, HDF5, ProgressBars, CairoMakie
-using LinearAlgebra, Statistics, Rotations
+using LinearAlgebra, Statistics, Rotations, Printf
 include("function_bundle.jl");
 
 #? mode selection part ?#
@@ -80,7 +80,13 @@ elseif main_keyword == "1Q"
 end
 #? structure factor calculation part ?#
 #? data saving part ?#
-figname = "figure_"*main_keyword*sweep_mode*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".png";
+tail    = @sprintf("BQ_%+.2f_J2__%+.2f_Jc1_%+.2f_Jc2_%+.2f",BQ,j2,jc1,jc2);
+tail    = replace(tail,"." => "p","-" => "M","+" => "P");
+figname = @sprintf("data_figure_%s_%s_%s.png",main_keyword,sweep_mode,tail);
+h5name  = @sprintf("data_h5file_%s_%s_%s.h5",main_keyword,sweep_mode,tail);
+# figname = "figure_"*main_keyword*sweep_mode*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".png";
+# h5name  = "exportFile_"*main_keyword*sweep_mode*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".h5";
+
 if sweep_mode == "2D"
   fig = Figure();  ax = Axis(fig[1, 1], aspect = norm1/norm2);
   heatmap!(ax, range1, range2, data[:,:];  colormap = (:viridis, 1), colorrange = (1,100));
@@ -92,7 +98,7 @@ elseif sweep_mode == "1D"
   plot!(ax2, range2, data_2; color = :red, linewidth = 2);
   save(figname,fig);
 end
-h5name  = "exportFile_"*main_keyword*sweep_mode*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".h5";
+
 if sweep_mode == "2D"
   export_to_h5file2D(h5name,data,range1,range2,norm1,norm2);
 elseif sweep_mode == "1D"
