@@ -1,4 +1,4 @@
-function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1))
+function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,dims)
   
   sys = System(CoTa3S6, [1 => Moment(s=3/2, g=2)], :dipole);
 
@@ -13,7 +13,7 @@ function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1))
   set_exchange!(sys, Jc1mat, Bond(1,2,[0, 0, 0]));
   set_exchange!(sys, Jc2, Bond(1,2,[1, 1, 0]));
   set_onsite_coupling!(sys, S -> Kz*S[3]^2, 1);
-  sys = repeat_periodically(sys, (3,3,1));
+  sys = repeat_periodically(sys, dims);
 
   return sys;
 end
