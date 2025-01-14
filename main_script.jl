@@ -8,8 +8,7 @@ include("function_bundle.jl");
 main_keyword = ARGS[1];  sweep_mode = ARGS[2];  energies = [1.5];
 #? mode selection part ?#
 
-kernel = lorentzian(fwhm=2.0);
-formfactors = [1 => FormFactor("Co2")];
+kernel = lorentzian(fwhm=2.0);  formfactors = [1 => FormFactor("Co2")];
 
 #? define system part ?#
 J1 = 1.6;  Kz = -0.001;
@@ -24,21 +23,7 @@ j3 = 1/2 * (1 - (F*G - jc2*F/2 + 2*jc2*G )/√(F*F-2*F*G+4*G*G));
 J2 = j2 * J1;  J3 = j3 * J1;  Jc1 = jc1 * J1;  Jc2 = jc2 * J1;
 Jc1mat = Jc1 * ([1 0 0; 0 1 0; 0 0 1] + 0.001 * dmvec([0, 0, 1]));
 
-cryst = Crystal("CoTaS.cif",symprec=1e-3);
-CoTa3S6 = subcrystal(cryst, "Co");
-
-# sys = System(CoTa3S6, [1 => Moment(s=3/2, g=2)], :dipole)
-# if main_keyword == "3Q"
-#   set_pair_coupling!(sys, (Si, Sj) -> J1*(Si'*Sj) + B1*(Si'*Sj)^2, Bond(1, 1, [1, 0, 0]));
-# elseif main_keyword == "1Q"
-#   set_exchange!(sys, J1, Bond(1, 1, [1, 0, 0]));
-# else  error("Invalid keyword.");  end
-# set_exchange!(sys, J2, Bond(1,1,[1,-1, 0]));
-# set_exchange!(sys, J3, Bond(1,1,[2, 0, 0]));
-# set_exchange!(sys, Jc1mat, Bond(1,2,[0, 0, 0]));
-# set_exchange!(sys, Jc2, Bond(1,2,[1, 1, 0]));
-# set_onsite_coupling!(sys, S -> Kz*S[3]^2, 1);
-# sys = repeat_periodically(sys, (3,3,1));
+cryst = Crystal("CoTaS.cif",symprec=1e-3);  CoTa3S6 = subcrystal(cryst, "Co");
 
 #? define system part ?#
 
@@ -95,8 +80,6 @@ tail    = @sprintf("B1_%+.2f_J2__%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1,j2,jc1,jc2);
 tail    = replace(tail,"." => "p","-" => "M","+" => "P");
 figname = @sprintf("data_figure_%s_%s_%s.png",main_keyword,sweep_mode,tail);
 h5name  = @sprintf("data_h5file_%s_%s_%s.h5",main_keyword,sweep_mode,tail);
-# figname = "figure_"*main_keyword*sweep_mode*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".png";
-# h5name  = "exportFile_"*main_keyword*sweep_mode*replace("$(j2)_$(jc1)_$(jc2)","." => "p")*".h5";
 
 if sweep_mode == "2D"
   fig = Figure();  ax = Axis(fig[1, 1], aspect = norm1/norm2);

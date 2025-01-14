@@ -116,7 +116,7 @@ function define_qline(cryst,axis1,axis2,N1,N2)
   qpath2 = q_space_path(cryst, qline2, N2);
   return qpath1, qpath2, range1, range2, norm1, norm2;
 end
-      
+  
 function export_to_h5file2D(filename, data, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
   h5write(filename, "data", data);
   h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
@@ -126,6 +126,22 @@ function export_to_h5file2D(filename, data, range1, range2, norm1, norm2, b1, j2
 end
       
 function export_to_h5file1D(filename, data_1, data_2, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
+  h5write(filename, "data_1", data_1);  h5write(filename, "data_2", data_2);
+  h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
+  h5write(filename, "norm1", norm1);    h5write(filename, "norm2", norm2);
+  h5write(filename, "b1", b1);          h5write(filename, "j2", j2);
+  h5write(filename, "jc1", jc1);        h5write(filename, "jc2", jc2);
+end
+
+function export_to_h5file2D_1Q3Q(filename, data, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
+  h5write(filename, "data", data);
+  h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
+  h5write(filename, "norm1", norm1);    h5write(filename, "norm2", norm2);
+  h5write(filename, "b1", b1);          h5write(filename, "j2", j2);
+  h5write(filename, "jc1", jc1);        h5write(filename, "jc2", jc2);
+end
+      
+function export_to_h5file1D_1Q3Q(filename, data_1, data_2, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
   h5write(filename, "data_1", data_1);  h5write(filename, "data_2", data_2);
   h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
   h5write(filename, "norm1", norm1);    h5write(filename, "norm2", norm2);
