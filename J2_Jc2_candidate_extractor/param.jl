@@ -4,7 +4,7 @@ J1 = 1.0;  Jc1 = 1.00;
 filename = @sprintf("LT_minimize_%.4f",Jc1);
 filename = replace(filename,"." => "p");  filename = filename*".dat";
 
-J2stt = 0.00;   J2stp = 0.02;   J2end = 2.00;   J2arr = J2stt:J2stp:J2end;
+J2stt = 0.00;   J2stp = 0.02;   J2end = 1.00;   J2arr = J2stt:J2stp:J2end;
 Jc2stt =-0.50;  Jc2stp = 0.02;  Jc2end =+0.50;  Jc2arr = Jc2stt:Jc2stp:Jc2end;
 # J3stt =-0.10;  J3stp = 0.01;  J3end = 1.00;  J3arr = J3stt:J3stp:J3end;
 
