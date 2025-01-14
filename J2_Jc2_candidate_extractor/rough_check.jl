@@ -1,7 +1,7 @@
 include("param.jl");
 using CairoMakie
 
-filename = "LT_minimize_1p0000.dat";
+# filename = "LT_minimize_1p0000.dat";
 Js_Q = Matrix{Float64}(undef,0,6);
 
 file = open(filename,"r");

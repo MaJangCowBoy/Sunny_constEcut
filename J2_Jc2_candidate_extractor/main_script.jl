@@ -1,8 +1,8 @@
 #? Please execute with "julia_wh --threads=auto"
 #? or "julia_wh --threads=4" etc.
 
-include("param.jl");  include("function_bundle.jl");
 using Statistics, LinearAlgebra, Printf
+include("param.jl");  include("function_bundle.jl");
 
 npar = Threads.nthreads();
 
@@ -58,9 +58,6 @@ Threads.@threads for id in 1:npar
     # Js_Q[it1,:] = [Js_arr[it1,:],Qs];
   end
 end
-
-filename = @sprintf("LT_minimize_%.4f",Jc1);
-filename = replace(filename,"." => "p");  filename = filename*".dat";
 
 file = open(filename,"w");
 for rows in eachrow(Js_Q)
