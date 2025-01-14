@@ -133,16 +133,19 @@ function export_to_h5file1D(filename, data_1, data_2, range1, range2, norm1, nor
   h5write(filename, "jc1", jc1);        h5write(filename, "jc2", jc2);
 end
 
-function export_to_h5file2D_1Q3Q(filename, data, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
-  h5write(filename, "data", data);
-  h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
-  h5write(filename, "norm1", norm1);    h5write(filename, "norm2", norm2);
-  h5write(filename, "b1", b1);          h5write(filename, "j2", j2);
-  h5write(filename, "jc1", jc1);        h5write(filename, "jc2", jc2);
+function export_to_h5file2D_combine_1Q3Q(filename, 
+  data_1Q, data_3Q, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
+  h5write(filename, "data_1Q", data_1Q);  h5write(filename, "data_3Q", data_3Q);
+  h5write(filename, "range1", range1);    h5write(filename, "range2", range2);
+  h5write(filename, "norm1", norm1);      h5write(filename, "norm2", norm2);
+  h5write(filename, "b1", b1);            h5write(filename, "j2", j2);
+  h5write(filename, "jc1", jc1);          h5write(filename, "jc2", jc2);
 end
       
-function export_to_h5file1D_1Q3Q(filename, data_1, data_2, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
-  h5write(filename, "data_1", data_1);  h5write(filename, "data_2", data_2);
+function export_to_h5file1D_combine_1Q3Q(filename, 
+  data_1_1Q, data_2_1Q, data_1_3Q, data_2_3Q, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
+  h5write(filename, "data_1_1Q", data_1_1Q);  h5write(filename, "data_2_1Q", data_2_1Q);
+  h5write(filename, "data_1_3Q", data_1_3Q);  h5write(filename, "data_2_3Q", data_2_3Q);
   h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
   h5write(filename, "norm1", norm1);    h5write(filename, "norm2", norm2);
   h5write(filename, "b1", b1);          h5write(filename, "j2", j2);

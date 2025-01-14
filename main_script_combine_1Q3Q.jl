@@ -78,24 +78,20 @@ end
 #? data saving part ?#
 tail    = @sprintf("B1_%+.2f_J2__%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1,j2,jc1,jc2);
 tail    = replace(tail,"." => "p","-" => "M","+" => "P");
-figname = @sprintf("data_figure_%s_%s_%s.png",main_keyword,sweep_mode,tail);
-h5name  = @sprintf("data_h5file_%s_%s_%s.h5",main_keyword,sweep_mode,tail);
+figname = @sprintf("data_figure_combine_1Q3Q_%s_%s.png",sweep_mode,tail);
+h5name  = @sprintf("data_h5file_combine_1Q3Q_%s_%s.h5", sweep_mode,tail);
 
 if sweep_mode == "2D"
   fig = Figure();  ax = Axis(fig[1, 1], aspect = norm1/norm2);
   heatmap!(ax, range1, range2, data[:,:];  colormap = (:viridis, 1), colorrange = (1,100));
   fig, ax = add_BZ_boundary(fig, ax);  xlims!(ax, -1, 1);  ylims!(ax, -√3/2, √3/2);  
   save(figname,fig);
+  export_to_h5file2D_combine_1Q3Q(h5name,data,range1,range2,norm1,norm2,b1,j2,jc1,jc2);
 elseif sweep_mode == "1D"
   fig = Figure();  ax1 = Axis(fig[1, 1]);  ax2 = Axis(fig[2, 1]);
   plot!(ax1, range1, data_1; color = :blue, linewidth = 2);
   plot!(ax2, range2, data_2; color = :red, linewidth = 2);
   save(figname,fig);
-end
-
-if sweep_mode == "2D"
-  export_to_h5file2D(h5name,data,range1,range2,norm1,norm2,b1,j2,jc1,jc2);
-elseif sweep_mode == "1D"
-  export_to_h5file1D(h5name,data_1,data_2,range1,range2,norm1,norm2,b1,j2,jc1,jc2);
+  export_to_h5file1D_combine_1Q3Q(h5name,data_1,data_2,range1,range2,norm1,norm2,b1,j2,jc1,jc2);
 end
 #? data saving part ?#
