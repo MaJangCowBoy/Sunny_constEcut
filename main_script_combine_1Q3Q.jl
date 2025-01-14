@@ -83,16 +83,16 @@ figname = @sprintf("data_figure_combine_1Q3Q_%s_%s.png",sweep_mode,tail);
 h5name  = @sprintf("data_h5file_combine_1Q3Q_%s_%s.h5", sweep_mode,tail);
 
 if sweep_mode == "2D"
-  fig = Figure();  ax = Axis(fig[1, 1], aspect = norm1/norm2);
-  heatmap!(ax, range1, range2, data[:,:];  colormap = (:viridis, 1), colorrange = (1,100));
-  fig, ax = add_BZ_boundary(fig, ax);  xlims!(ax, -1, 1);  ylims!(ax, -√3/2, √3/2);  
-  save(figname,fig);
+  # fig = Figure();  ax = Axis(fig[1, 1], aspect = norm1/norm2);
+  # heatmap!(ax, range1, range2, data[:,:];  colormap = (:viridis, 1), colorrange = (1,100));
+  # fig, ax = add_BZ_boundary(fig, ax);  xlims!(ax, -1, 1);  ylims!(ax, -√3/2, √3/2);  
+  # save(figname,fig);
   export_to_h5file2D_combine_1Q3Q(h5name,data_1Q,data_3Q,range1,range2,norm1,norm2,b1,j2,jc1,jc2);
 elseif sweep_mode == "1D"
-  fig = Figure();  ax1 = Axis(fig[1, 1]);  ax2 = Axis(fig[2, 1]);
-  plot!(ax1, range1, data_1; color = :blue, linewidth = 2);
-  plot!(ax2, range2, data_2; color = :red, linewidth = 2);
-  save(figname,fig);
+  # fig = Figure();  ax1 = Axis(fig[1, 1]);  ax2 = Axis(fig[2, 1]);
+  # plot!(ax1, range1, data_1; color = :blue, linewidth = 2);
+  # plot!(ax2, range2, data_2; color = :red, linewidth = 2);
+  # save(figname,fig);
   export_to_h5file1D_combine_1Q3Q(h5name,data_1_1Q,data_2_1Q,data_1_3Q,data_2_3Q,range1,range2,norm1,norm2,b1,j2,jc1,jc2);
 end
 #? data saving part ?#
