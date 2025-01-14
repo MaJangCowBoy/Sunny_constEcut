@@ -5,7 +5,7 @@ using LinearAlgebra, Statistics, Rotations, Printf
 include("function_bundle.jl");
 
 #? mode selection part ?#
-main_keyword = ARGS[1];  sweep_mode = ARGS[2];  energies = [1.5];
+sweep_mode = ARGS[1];  energies = [1.5];
 #? mode selection part ?#
 
 kernel = lorentzian(fwhm=2.0);
@@ -18,7 +18,7 @@ elseif main_keyword == "1Q"  b1 = 0.00;
 else  error("Invalid keyword.");  end;
 B1 = b1 * J1;
 
-j2 = parse(Float64,ARGS[3]);  jc1 = parse(Float64,ARGS[4]);  jc2 = parse(Float64,ARGS[5]);
+j2 = parse(Float64,ARGS[2]);  jc1 = parse(Float64,ARGS[3]);  jc2 = parse(Float64,ARGS[4]);
 F = jc1 + jc2;  G = jc1 - jc2 * 0.5;
 j3 = 1/2 * (1 - (F*G - jc2*F/2 + 2*jc2*G )/√(F*F-2*F*G+4*G*G));
 J2 = j2 * J1;  J3 = j3 * J1;  Jc1 = jc1 * J1;  Jc2 = jc2 * J1;
