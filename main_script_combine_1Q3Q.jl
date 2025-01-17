@@ -69,7 +69,7 @@ elseif sweep_mode == "1D"
   res1 = intensities_broadened(swt, qpath1, energies, formula);
   data_1_3Q = res1[:,1];
 
-  res2 = intensities(swt, qpath2; energies, kernel);
+  res2 = intensities_broadened(swt, qpath2, energies, formula);
   data_2_3Q = res2[:,1];
 
 
