@@ -7,7 +7,7 @@ using LinearAlgebra, Statistics, Rotations
 include("function_bundle.jl");
 
 #? mode selection part ?#
-main_keyword = "1Q";  sweep_mode = "2D";  energies = [1.5];
+main_keyword = "1Q";  sweep_mode = "2D";
 #? mode selection part ?#
 
 #? Jlist preparation part ?#
@@ -48,18 +48,10 @@ Threads.@threads for id in 1:npar
     J2 = j2 * J1;  J3 = j3 * J1;  Jc1 = jc1 * J1;  Jc2 = jc2 * J1;
     Jc1mat = Jc1 * ([1 0 0; 0 1 0; 0 0 0] + 0.001 * dmvec([0, 0, 1]));
     
-    cryst = Crystal("CoTaS.cif",symprec=1e-3);
-    CoTa3S6 = subcrystal(cryst, "Co1");
-    sys = System(CoTa3S6, [1 => Moment(s=3/2, g=2)], :dipole)
+    energies = 1/2 .* [J1 + J2];
 
-    set_pair_coupling!(sys, (Si, Sj) -> Si'*J1*Sj + B1*(Si'*Sj)^2, Bond(1, 1, [1, 0, 0]));
-    set_exchange!(sys, J2, Bond(1,1,[1,-1,0]));
-    set_exchange!(sys, J3, Bond(1,1,[2,0,0]));
-    set_exchange!(sys, Jc1mat, Bond(1,2,[0,0,0]));
-    set_exchange!(sys, Jc2, Bond(1,2,[1,1,0]));
-    set_onsite_coupling!(sys, S -> Kz*S[3]^2, 1);
+    dim = (3,3,1);  sys, cryst = CoTaS_5var(dim, J1, j2, j3, jc1, jc2; b1);
 
-    sys = repeat_periodically(sys, (3,3,1));
     #? define system part ?#
 
     #? define q-points part ?#

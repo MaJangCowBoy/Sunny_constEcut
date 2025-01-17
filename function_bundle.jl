@@ -1,6 +1,6 @@
-function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,dims)
+function define_system(CoTa3S6,main_keyword,info,J1,B1,J2,J3,Jc1mat,Jc2,Kz,dims)
   
-  sys = System(CoTa3S6, [1 => Moment(s=3/2, g=2)], :dipole);
+  sys = System(CoTa3S6, dims, info, :dipole);
 
   if main_keyword == "3Q"
     set_pair_coupling!(sys, (Si, Sj) -> J1*(Si'*Sj) + B1*(Si'*Sj)^2, Bond(1, 1, [1, 0, 0]));
@@ -13,7 +13,7 @@ function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,dims)
   set_exchange!(sys, Jc1mat, Bond(1,2,[0, 0, 0]));
   set_exchange!(sys, Jc2, Bond(1,2,[1, 1, 0]));
   set_onsite_coupling!(sys, S -> Kz*S[3]^2, 1);
-  sys = repeat_periodically(sys, dims);
+  # sys = repeat_periodically(sys, dims);
 
   return sys;
 end
@@ -60,7 +60,7 @@ function system_initialize(sys::System, keyword::String, J1::Float64)
   langevin.kT = 0.1 * meV_per_K;  for _ in 1:100000  step!(sys, langevin)  end
   langevin.kT = 0.0;              for _ in 1:100000  step!(sys, langevin)  end
   
-  for _ in 1:20  minimize_energy!(sys; maxiters = 3000, g_tol=1e-9);  end
+  for _ in 1:100  minimize_energy!(sys; maxiters = 3000, g_tol=1e-9);  end
 
   return sys;
 end
