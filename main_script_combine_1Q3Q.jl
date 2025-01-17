@@ -56,7 +56,7 @@ if sweep_mode == "2D"
   qgrid, range1, range2, norm1, norm2 = define_qgrid(cryst,axis1,axis2,N1,N2);
 
   res = intensities_broadened(swt, qgrid, energies, formula);
-  data_3Q = res.data[:,:,1];
+  data_3Q = res[:,:,1];
 
   res1 = intensities_broadened(swt1, qgrid, energies, formula1);
   res2 = intensities_broadened(swt2, qgrid, energies, formula2);
@@ -71,17 +71,18 @@ elseif sweep_mode == "1D"
 
   res2 = intensities(swt, qpath2; energies, kernel);
   data_2_3Q = res2[:,1];
-    #* *#
+
 
   res1_1 = intensities_broadened(swt1, qpath1, energies, formula1);
   res2_1 = intensities_broadened(swt2, qpath1, energies, formula2);
   res3_1 = intensities_broadened(swt3, qpath1, energies, formula3);
   data_1_1Q = res1_1[:,1] + res2_1[:,1] + res3_1[:,1];
 
-  res1_2 = intensities(swt1, qpath2; energies, kernel);
-  res2_2 = intensities(swt2, qpath2; energies, kernel);
-  res3_2 = intensities(swt3, qpath2; energies, kernel);
-  data_2_1Q = res1_2.data[1,:] + res2_2.data[1,:] + res3_2.data[1,:];
+  res1_2 = intensities_broadened(swt1, qpath2, energies, formula1);
+  res2_2 = intensities_broadened(swt2, qpath2, energies, formula2);
+  res3_2 = intensities_broadened(swt3, qpath2, energies, formula3);
+  data_2_1Q = res1_2[:,1] + res2_2[:,1] + res3_2[:,1];
+    #* *#
 end
 #? define q-points and calculate intensities ?#
 
