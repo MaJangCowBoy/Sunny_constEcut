@@ -114,8 +114,9 @@ else
   tail    = @sprintf("B1_%+.2f_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1[1],B1[end],j2,jc1,jc2);
   tail    = replace(tail,"." => "p","-" => "M","+" => "P");
 end
-figname = @sprintf("data_figure_combine_1Q3Q_%s_%s.png",sweep_mode,tail);
-h5name  = @sprintf("data_h5file_combine_1Q3Q_%s_%s.h5", sweep_mode,tail);
+# figname = @sprintf("data_figure_combine_1Q3Q_%s_%s.png",sweep_mode,tail);
+# h5name  = @sprintf("data_h5file_combine_1Q3Q_%s_%s.h5", sweep_mode,tail);
+h5name  = @sprintf("data_h5file_combine_1Q3Q_%s.h5",tail);
 
 export_to_h5file_combine_1Q3Q(h5name, 
   data_1Q, data_3Q, data_1_1Q, data_2_1Q, data_1_3Q, data_2_3Q, 
