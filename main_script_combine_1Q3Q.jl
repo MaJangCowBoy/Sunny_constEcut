@@ -56,7 +56,7 @@ measure = ssf_perp(sys3; formfactors);  swt3 = SpinWaveTheory(sys3; measure);
 
 #? define q-points and calculate intensities ?#
 axis1 = [ 1.0, 0.0, 0.0];  N1 = 60;  axis2 = [-0.5, 1.0, 0.0];  N2 = 60;
-if sweep_mode == "2D"
+# if sweep_mode == "2D"
   qgrid, range1, range2, norm1, norm2 = define_qgrid(cryst,axis1,axis2,N1,N2);
 
   data_3Q = zeros(Float64,length(B1),N1,N2);
@@ -75,7 +75,7 @@ if sweep_mode == "2D"
   res3 = intensities(swt3, qgrid; energies, kernel);
   data_1Q = res1.data[1,:,:] + res2.data[1,:,:] + res3.data[1,:,:];
 
-elseif sweep_mode == "1D"
+# elseif sweep_mode == "1D"
   qpath1, qpath2, range1, range2, norm1, norm2 = define_qline(cryst,axis1,axis2,N1,N2);
 
   data_1_3Q = zeros(Float64,length(B1),N1);  data_2_3Q = zeros(Float64,length(B1),N2);
@@ -102,13 +102,18 @@ elseif sweep_mode == "1D"
   res2_2 = intensities(swt2, qpath2; energies, kernel);
   res3_2 = intensities(swt3, qpath2; energies, kernel);
   data_2_1Q = res1_2.data[1,:] + res2_2.data[1,:] + res3_2.data[1,:];
-end
+# end
 #? define q-points and calculate intensities ?#
 
 
 #? data saving part ?#
-tail    = @sprintf("B1_%+.2f_J2__%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1,j2,jc1,jc2);
-tail    = replace(tail,"." => "p","-" => "M","+" => "P");
+if length(B1) == 1
+  tail    = @sprintf("B1_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1,j2,jc1,jc2);
+  tail    = replace(tail,"." => "p","-" => "M","+" => "P");
+else
+  tail    = @sprintf("B1_%+.2f_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1[1],B1[end],j2,jc1,jc2);
+  tail    = replace(tail,"." => "p","-" => "M","+" => "P");
+end
 figname = @sprintf("data_figure_combine_1Q3Q_%s_%s.png",sweep_mode,tail);
 h5name  = @sprintf("data_h5file_combine_1Q3Q_%s_%s.h5", sweep_mode,tail);
 
@@ -125,4 +130,6 @@ elseif sweep_mode == "1D"
   # save(figname,fig);
   export_to_h5file1D_combine_1Q3Q(h5name,data_1_1Q,data_2_1Q,data_1_3Q,data_2_3Q,range1,range2,norm1,norm2,b1,j2,jc1,jc2);
 end
+
+export_to_h5file_combine_1Q3Q
 #? data saving part ?#
