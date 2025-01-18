@@ -62,7 +62,7 @@ if sweep_mode == "2D"
   data_3Q = zeros(Float64,length(B1),N1,N2);
   if length(swt) == 1
     res = intensities(swt, qgrid, energies, kernel);
-    global data_3Q[1,:,:] = res.data[:,:,1];
+    global data_3Q[1,:,:] = res.data[1,:,:];
   else
     for (i,swt_i) in enumerate(swt)
       res_i = intensities(swt_i, qgrid; energies, kernel);
