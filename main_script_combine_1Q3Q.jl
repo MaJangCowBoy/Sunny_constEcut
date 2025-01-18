@@ -117,7 +117,7 @@ end
 figname = @sprintf("data_figure_combine_1Q3Q_%s_%s.png",sweep_mode,tail);
 h5name  = @sprintf("data_h5file_combine_1Q3Q_%s_%s.h5", sweep_mode,tail);
 
-export_to_h5file_combine_1Q3Q(filename, 
+export_to_h5file_combine_1Q3Q(h5name, 
   data_1Q, data_3Q, data_1_1Q, data_2_1Q, data_1_3Q, data_2_3Q, 
   range1, range2, norm1, norm2, b1, j2, jc1, jc2)
 
