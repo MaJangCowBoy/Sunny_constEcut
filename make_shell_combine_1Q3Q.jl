@@ -13,7 +13,7 @@ f = open("autoRun.sh","w");
 println(f, "#!/bin/bash")
 for (id,row) in enumerate(eachrow(data))
   j2 = row[1];  jc1 = row[2];  jc2 = row[3];
-  str = @sprintf("julia_wh main_script.jl 1D %.3f %.3f %.3f 1> out_%d.txt 2> err_%d.txt &", j2, jc1, jc2, id, id);
+  str = @sprintf("julia_wh main_script_combine_1Q3Q.jl 1D %.3f %.3f %.3f 1> out_%d.txt 2> err_%d.txt &", j2, jc1, jc2, id, id);
   println(f, str)
   if id%104 == 0
     println(f, "wait")
