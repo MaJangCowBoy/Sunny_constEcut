@@ -12,7 +12,7 @@ sweep_mode = ARGS[1];  # energies = [1.5];
 kernel = lorentzian(fwhm=2.0);  formfactors = [1 => FormFactor("Co2")];
 
 J1 = 1.60;  Kz = -0.001;
-b1 = 0.06;  B1 = b1 * J1;
+b1 = [0.00, 0.02, 0.04, 0.06];  B1 = J1 .* b1 ;
 
 j2 = parse(Float64,ARGS[2]);  jc1 = parse(Float64,ARGS[3]);  jc2 = parse(Float64,ARGS[4]);
 F = jc1 + jc2;  G = jc1 - jc2 * 0.5;
@@ -27,9 +27,21 @@ energies = [0.5 * (J1+J2)]; # meV
 
 #? define system part ?#
 cryst = Crystal("CoTaS.cif",symprec=1e-3);  CoTa3S6 = subcrystal(cryst, "Co");
-sys = define_system(CoTa3S6,"3Q",J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
-keyword = "3Q";  sys = system_initialize(sys, keyword, J1);
-measure = ssf_perp(sys; formfactors);  swt = SpinWaveTheory(sys; measure);
+
+if length(B1) == 1
+  B1 = B1[1];
+  sys = define_system(CoTa3S6,"3Q",J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
+  keyword = "3Q";  sys = system_initialize(sys, keyword, J1);
+  measure = ssf_perp(sys; formfactors);  swt = SpinWaveTheory(sys; measure);
+else
+  swt = [];
+  for Bi in B1
+    sys_i = define_system(CoTa3S6,"3Q",J1,Bi,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
+    keyword = "3Q";  sys_i = system_initialize(sys_i, keyword, J1);
+    measure = ssf_perp(sys_i; formfactors);  swt_i = SpinWaveTheory(sys_i; measure);  
+    global swt = [swt; swt_i];
+  end
+end
 
 sys1 = define_system(CoTa3S6,"1Q",J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
 keyword = "1Q_1";  sys1 = system_initialize(sys1, keyword, J1);
@@ -47,8 +59,16 @@ axis1 = [ 1.0, 0.0, 0.0];  N1 = 60;  axis2 = [-0.5, 1.0, 0.0];  N2 = 60;
 if sweep_mode == "2D"
   qgrid, range1, range2, norm1, norm2 = define_qgrid(cryst,axis1,axis2,N1,N2);
 
-  res = intensities(swt, qgrid; energies, kernel);
-  data_1Q = res.data[1,:,:];
+  data_3Q = zeros(Float64,length(B1),N1,N2);
+  if length(swt) == 1
+    res = intensities(swt, qgrid, energies, kernel);
+    global data_3Q[1,:,:] = res.data[:,:,1];
+  else
+    for (i,swt_i) in enumerate(swt)
+      res_i = intensities(swt_i, qgrid; energies, kernel);
+      global data_3Q[i,:,:] = res_i.data[1,:,:];
+    end
+  end
 
   res1 = intensities(swt1, qgrid; energies, kernel);
   res2 = intensities(swt2, qgrid; energies, kernel);
@@ -58,11 +78,20 @@ if sweep_mode == "2D"
 elseif sweep_mode == "1D"
   qpath1, qpath2, range1, range2, norm1, norm2 = define_qline(cryst,axis1,axis2,N1,N2);
 
-  res1 = intensities(swt, qpath1; energies, kernel);
-  data_1_3Q = res1.data[1,:];
-
-  res2 = intensities(swt, qpath2; energies, kernel);
-  data_2_3Q = res2.data[1,:];
+  data_1_3Q = zeros(Float64,length(B1),N1);  data_2_3Q = zeros(Float64,length(B1),N2);
+  if length(swt) == 1
+    res1 = intensities(swt, qpath1; energies, kernel);
+    global data_1_3Q[1,:] = res1.data[1,:];
+    res2 = intensities(swt, qpath2; energies, kernel);
+    global data_2_3Q[1,:] = res2.data[1,:];
+  else
+    for (i,swt_i) in enumerate(swt)
+      res1_i = intensities(swt_i, qpath1; energies, kernel);
+      global data_1_3Q[i,:] = res1_i.data[1,:];
+      res2_i = intensities(swt_i, qpath2; energies, kernel);
+      global data_2_3Q[i,:] = res2_i.data[1,:];
+    end
+  end
 
   res1_1 = intensities(swt1, qpath1; energies, kernel);
   res2_1 = intensities(swt2, qpath1; energies, kernel);
