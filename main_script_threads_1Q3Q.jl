@@ -34,7 +34,7 @@ qpath1, qpath2, range1, range2, norm1, norm2 = define_qline(cryst,axis1,axis2,N1
 
 Threads.@threads for i in 1:npar
 
-  steps = Int(ceil(size(data,1)/npar));
+  steps = Int(floor(size(data,1)/npar));
   idxStt = 1 + (i-1) * steps;
   idxEnd = i * steps;
   idxEnd = (i == npar) ? size(data,1) : idxEnd;
