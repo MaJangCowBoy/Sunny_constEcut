@@ -110,14 +110,8 @@ Threads.@threads for i in 1:npar
     #? 1D: calculate intensities and store the data ?#
     
     #? data saving part ?#
-    if length(B1) == 1
-      tail    = @sprintf("B1_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1,j2,jc1,jc2);
-      tail    = replace(tail,"." => "p","-" => "M","+" => "P");
-    else
-      tail    = @sprintf("B1_%+.2f_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1[1],B1[end],j2,jc1,jc2);
-      tail    = replace(tail,"." => "p","-" => "M","+" => "P");
-    end
-
+    tail = @sprintf("B1_%+.2f_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1[1],B1[end],j2,jc1,jc2);
+    tail = replace(tail,"." => "p","-" => "M","+" => "P");
     h5name  = @sprintf("data_h5file_threads_1Q3Q_%s.h5",tail);
     
     fid = h5open(h5name,"w");
