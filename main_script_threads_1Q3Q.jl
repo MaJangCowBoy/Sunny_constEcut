@@ -13,12 +13,10 @@ npar = Threads.nthreads();
 #? Data loading part ?#
 data = Matrix{Float64}(undef, 0, 6);
 f = open("LT_minimize_0p0000_trim.dat", "r");
-for line in eachline(f)
-  tok = parse.(Float64,split(line))
-  global data = [data; tok']
-end;  close(f);  
-#* data stored like, 
-#*   j2 - jc1 - jc2 - Q1 - Q2 - Q3.
+for line in eachline(f)  
+  tok = parse.(Float64,split(line));  global data = [data; tok'];
+end
+close(f);  #* data stored like, j2 - jc1 - jc2 - Q1 - Q2 - Q3.
 #? Data loading part ?#
 
 #? Basic parameters ?#
@@ -47,7 +45,6 @@ Threads.@threads for i in 1:npar
     F = jc1 + jc2;  G = jc1 - jc2 * 0.5;
     j3 = 1/2 * (1 - (F*G - jc2*F/2 + 2*jc2*G )/√(F*F-2*F*G+4*G*G));
     J2 = j2 * J1;  J3 = j3 * J1;  Jc1 = jc1 * J1;  Jc2 = jc2 * J1;
-    Jc1mat = Jc1 * ([1 0 0; 0 1 0; 0 0 1] + 0.001 * dmvec([0, 0, 1]));
     
     energies = [0.5 * (J1+J2)]; # meV
     #? parameter allocation ?#
@@ -56,7 +53,7 @@ Threads.@threads for i in 1:npar
     #* 3Q LSWT part.
     swt_3Q = [];
     for Bi in B1
-      sysi = define_system(CoTa3S6,"3Q",J1,Bi,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
+      sysi = define_system(CoTa3S6,"3Q",J1,Bi,J2,J3,Jc1,Jc2,Kz,(3,3,1));
       keyword = "3Q";  sysi = system_initialize(sysi, keyword, J1);
       measure = ssf_perp(sysi; formfactors);  swti = SpinWaveTheory(sysi; measure);
       global swt_3Q = [swt_3Q; swti];
@@ -64,7 +61,7 @@ Threads.@threads for i in 1:npar
     #* 1Q LSWT part.
     swt_1Q = [];
     for key in ["1Q_1", "1Q_2", "1Q_3"]
-      sysi = define_system(CoTa3S6,"1Q",J1,B1,J2,J3,Jc1mat,Jc2,Kz,(3,3,1));
+      sysi = define_system(CoTa3S6,"1Q",J1,B1,J2,J3,Jc1,Jc2,Kz,(3,3,1));
       sysi = system_initialize(sysi, key, J1);
       measure = ssf_perp(sysi; formfactors);  swti = SpinWaveTheory(sysi; measure);
       global swt_1Q = [swt_1Q; swti];
@@ -125,8 +122,8 @@ Threads.@threads for i in 1:npar
     
     fid = h5open(h5name,"w");
     write(fid,"j2",j2);  write(fid,"jc1",jc1);  write(fid,"jc2",jc2);
-    write(fid,"range1",range1);  write(fid,"range2",range2);
-    write(fid,"norm1",norm1);  write(fid,"norm2",norm2);
+    write(fid,"range1",range1);  write(fid,"norm1",norm1);
+    write(fid,"range2",range2);  write(fid,"norm2",norm2);
     write(fid, "data2D_3Q", data2D_3Q);  write(fid, "data2D_1Q", data2D_1Q);
     write(fid,"data1Da_3Q", data2D_3Q);  write(fid,"data1Db_3Q", data2D_3Q);
     write(fid,"data1Da_1Q", data2D_1Q);  write(fid,"data1Db_1Q", data2D_1Q);
