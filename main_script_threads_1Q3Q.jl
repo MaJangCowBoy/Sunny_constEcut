@@ -117,6 +117,10 @@ Threads.@threads for i in 1:npar
     tail = @sprintf("B1_%+.2f_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",B1[1],B1[end],j2,jc1,jc2);
     tail = replace(tail,"." => "p","-" => "M","+" => "P");
     h5name  = @sprintf("data_h5file_threads_1Q3Q_%s.h5",tail);
+
+    if any(isnan, data2D_3Q) || any(isnan, data2D_1Q) || any(isnan, data1Da_3Q) || any(isnan, data1Db_3Q) || any(isnan, data1Da_1Q) || any(isnan, data1Db_1Q)
+      h5name = replace(h5name, ".h5" => "_nan.h5");
+    end
     
     fid = h5open(h5name,"w");
     write(fid,"j2",j2);  write(fid,"jc1",jc1);  write(fid,"jc2",jc2);
