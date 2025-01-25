@@ -85,7 +85,7 @@ Threads.@threads for i in 1:npar
 
     for (k,swt) in enumerate(swt_1Q)
       try
-        res = intensities(swt, qgrid; energies, kernel);  global data2D_1Q[k,:,:] = res.data[1,:,:];
+        res = intensities(swt, qgrid; energies, kernel);  global data2D_1Q[:,:] += res.data[1,:,:];
       catch
         println("err in 1Q LSWT for 2D, B1 = ", B1[k], " J2 = ", j2, " Jc2 = ", jc2);
       end
@@ -97,16 +97,16 @@ Threads.@threads for i in 1:npar
     data1Db_3Q = zeros(Float64,length(B1),N2);  data1Db_1Q = zeros(Float64,N2);
     for (k,swt) in enumerate(swt_3Q)
       try
-        res1 = intensities(swt, qpath1; energies, kernel);  global data1Da_3Q[k,:] += res1.data[1,:];
-        res2 = intensities(swt, qpath2; energies, kernel);  global data1Db_3Q[k,:] += res2.data[1,:];
+        res1 = intensities(swt, qpath1; energies, kernel);  global data1Da_3Q[k,:] = res1.data[1,:];
+        res2 = intensities(swt, qpath2; energies, kernel);  global data1Db_3Q[k,:] = res2.data[1,:];
       catch
         println("err in 3Q LSWT for 1D, B1 = ", B1[k], " J2 = ", j2, " Jc2 = ", jc2);
       end
     end
     for (k,swt) in enumerate(swt_1Q)
       try
-        res1 = intensities(swt, qpath1; energies, kernel);  global data1Da_1Q[k,:] += res1.data[1,:];
-        res2 = intensities(swt, qpath2; energies, kernel);  global data1Db_1Q[k,:] += res2.data[1,:];
+        res1 = intensities(swt, qpath1; energies, kernel);  global data1Da_1Q[:] += res1.data[1,:];
+        res2 = intensities(swt, qpath2; energies, kernel);  global data1Db_1Q[:] += res2.data[1,:];
       catch
         println("err in 1Q LSWT for 1D, B1 = ", B1[k], " J2 = ", j2, " Jc2 = ", jc2);
       end
