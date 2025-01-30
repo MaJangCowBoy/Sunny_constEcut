@@ -53,6 +53,14 @@ Threads.@threads for i in 1:npar
     energies = [0.5 * (J1+J2)]; # meV
     #? parameter allocation ?#
 
+    #? file existence check ?#
+    # tail = @sprintf("B1_%+.2f_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",b1[1],b1[end],j2,jc1,jc2);
+    # tail = replace(tail,"." => "p","-" => "M","+" => "P");
+    # h5name  = @sprintf("data_h5file_threads_1Q3Q_%s.h5",tail);
+    h5name = @sprintf("data_%.4d.h5",j);
+    if isfile(h5name)  println("File exists: ", h5name);  continue;  end
+    #? file existence check ?#
+
     #? define LSWT part ?#
     #* 3Q LSWT part.
     sys_3Q = [];  swt_3Q = [];
@@ -122,11 +130,6 @@ Threads.@threads for i in 1:npar
     end
     #? 1D: calculate intensities and store the data ?#
     
-    #? data saving part ?#
-    tail = @sprintf("B1_%+.2f_%+.2f_J2_%+.2f_Jc1_%+.2f_Jc2_%+.2f",b1[1],b1[end],j2,jc1,jc2);
-    tail = replace(tail,"." => "p","-" => "M","+" => "P");
-    h5name  = @sprintf("data_h5file_threads_1Q3Q_%s.h5",tail);
-
 #     if any(isnan, data2D_3Q) || any(isnan, data2D_1Q) || any(isnan, data1Da_3Q) || any(isnan, data1Db_3Q) || any(isnan, data1Da_1Q) || any(isnan, data1Db_1Q)
 #       h5name = replace(h5name, ".h5" => "_nan.h5");
 #     end
