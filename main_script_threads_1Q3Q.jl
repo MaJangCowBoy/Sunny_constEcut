@@ -114,7 +114,7 @@ Threads.@threads for i in 1:npar
         if k == 1  data1Da_1Q[:]  = res1.data[1,:];
         else       data1Da_1Q[:] += res1.data[1,:];  end
         res2 = intensities(swt, qpath2; energies, kernel);  
-        if k == 1  data1Db_1Q[:] += res2.data[1,:];
+        if k == 1  data1Db_1Q[:]  = res2.data[1,:];
         else       data1Db_1Q[:] += res2.data[1,:];  end
       catch
         println("err in 1Q LSWT for 1D,", " J2 = ", j2, " Jc2 = ", jc2);
