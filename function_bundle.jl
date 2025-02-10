@@ -1,4 +1,4 @@
-function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1,Jc2,Kz,dims)
+function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1mat,Jc2,Kz,dims)
   
   sys = System(CoTa3S6, [1 => Moment(s=3/2, g=2)], :dipole);
 
@@ -10,7 +10,10 @@ function define_system(CoTa3S6,main_keyword,J1,B1,J2,J3,Jc1,Jc2,Kz,dims)
 
   set_exchange!(sys, J2, Bond(1,1,[1,-1, 0]));
   set_exchange!(sys, J3, Bond(1,1,[2, 0, 0]));
-  set_exchange!(sys, Jc1, Bond(1,2,[0, 0, 0]));
+  if main_keyword == "1Q"
+    Jc1mat = Jc1mat * [1 0 0; 0 1 0; 0 0 1] + Jc1mat * dmvec([0,0,0.001]);
+  end
+  set_exchange!(sys, Jc1mat, Bond(1,2,[0, 0, 0]));
   set_exchange!(sys, Jc2, Bond(1,2,[1, 1, 0]));
   set_onsite_coupling!(sys, S -> Kz*S[3]^2, 1);
   sys = repeat_periodically(sys, dims);
@@ -60,7 +63,7 @@ function system_initialize(sys::System, keyword::String, J1::Float64)
   langevin.kT = 0.1 * meV_per_K;  for _ in 1:100000  step!(sys, langevin)  end
   langevin.kT = 0.0;              for _ in 1:100000  step!(sys, langevin)  end
   
-  for _ in 1:20  minimize_energy!(sys; maxiters = 3000);  end
+  for _ in 1:50  minimize_energy!(sys; maxiters = 3000);  end
 
   return sys;
 end
@@ -86,32 +89,32 @@ function add_BZ_boundary(fig,ax)
   return fig, ax
 end
       
-function define_qgrid(cryst,axis1,axis2,N1,N2)
+function define_qgrid(cryst,axis1,axis2,N1,N2; topbot1 = [-0.5, +0.5], topbot2 = [-0.5, +0.5])
 
   avctr = [1, 0, 0];  bvctr = [0.5,√3/2,0.0];
 
-  range1 = [];  for x in range(-0.3,+0.3,N1)  push!(range1, x)  end;
+  range1 = [];  for x in range(topbot1[1],topbot1[2],N1)  push!(range1, x)  end;
   range1 = Float64.(range1);  norm1 = norm(axis1[1]*avctr + axis1[2]*bvctr);
 
-  range2 = [];  for y in range(-1/6,+1/6,N2)  push!(range2, y)  end;
+  range2 = [];  for y in range(topbot2[1],topbot2[2],N2)  push!(range2, y)  end;
   range2 = Float64.(range2);  norm2 = norm(axis2[1]*avctr + axis2[2]*bvctr);
 
-  qgrid = q_space_grid(cryst, axis1, range1, axis2, range2; offset = [1/3,0,1]);
+  qgrid = q_space_grid(cryst, axis1, range1, axis2, range2; offset = [0,0,1]);
   return qgrid, range1, range2, norm1, norm2;
 end
-      
-function define_qline(cryst,axis1,axis2,N1,N2)
+
+function define_qline(cryst,axis1,axis2,N1,N2; topbot1 = [-1/6, +1/6], topbot2 = [-1/6, +1/6])
 
   avctr = [1, 0, 0];  bvctr = [0.5,√3/2,0.0];
 
-  range1 = [];  for x in range(-0.3,+0.3,N1)  push!(range1, x)  end;
+  range1 = [];  for x in range(topbot1[1],topbot1[2],N1)  push!(range1, x)  end;
   range1 = Float64.(range1);  norm1 = norm(axis1[1]*avctr + axis1[2]*bvctr);
 
-  range2 = [];  for y in range(-1/6,+1/6,N2)  push!(range2, y)  end;
+  range2 = [];  for y in range(topbot2[1],topbot2[2],N2)  push!(range2, y)  end;
   range2 = Float64.(range2);  norm2 = norm(axis2[1]*avctr + axis2[2]*bvctr);
 
-  qline1 = [[1/3, 0, 1] - 0.3 * axis1, [1/3, 0, 1] + 0.3 * axis1];
-  qline2 = [[1/3, 0, 1] - 1/6 * axis2, [1/3, 0, 1] + 1/6 * axis2];
+  qline1 = [[1/3, 0, 1] + topbot1[1] * axis1, [1/3, 0, 1] + topbot1[2] * axis1];
+  qline2 = [[1/3, 0, 1] + topbot2[1] * axis2, [1/3, 0, 1] + topbot2[2] * axis2];
   qpath1 = q_space_path(cryst, qline1, N1);
   qpath2 = q_space_path(cryst, qline2, N2);
   return qpath1, qpath2, range1, range2, norm1, norm2;
@@ -146,11 +149,12 @@ function export_to_h5file1D_combine_1Q3Q(filename,
   data_1_1Q, data_2_1Q, data_1_3Q, data_2_3Q, range1, range2, norm1, norm2, b1, j2, jc1, jc2)
   h5write(filename, "data_1_1Q", data_1_1Q);  h5write(filename, "data_2_1Q", data_2_1Q);
   h5write(filename, "data_1_3Q", data_1_3Q);  h5write(filename, "data_2_3Q", data_2_3Q);
-  h5write(filename, "range1", range1);        h5write(filename, "range2", range2);
-  h5write(filename, "norm1", norm1);          h5write(filename, "norm2", norm2);
-  h5write(filename, "b1", b1);                h5write(filename, "j2", j2);
-  h5write(filename, "jc1", jc1);              h5write(filename, "jc2", jc2);
+  h5write(filename, "range1", range1);  h5write(filename, "range2", range2);
+  h5write(filename, "norm1", norm1);    h5write(filename, "norm2", norm2);
+  h5write(filename, "b1", b1);          h5write(filename, "j2", j2);
+  h5write(filename, "jc1", jc1);        h5write(filename, "jc2", jc2);
 end
+
 
 function export_to_h5file_combine_1Q3Q(filename, 
   data_1Q, data_3Q, data_1_1Q, data_2_1Q, data_1_3Q, data_2_3Q, 
