@@ -20,7 +20,7 @@ close(f);  #* data stored like, j2 - jc1 - jc2 - Q1 - Q2 - Q3.
 #? Data loading part ?#
 
 #? Basic parameters ?#
-kernel = gaussian(fwhm=1.2);  formfactors = [1 => FormFactor("Co2")];
+kernel = gaussian(fwhm=0.2);  formfactors = [1 => FormFactor("Co2")];
 cryst = Crystal("CoTaS.cif",symprec=1e-3);  CoTa3S6 = subcrystal(cryst, "Co");
 J1 = 1.311;  Kz = -0.001;
 b1 = [0.00, 0.03, 0.06];  B1 = J1 .* b1;
